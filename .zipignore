@@ -1,0 +1,26 @@
+# Node / JS
+*node_modules*
+*package.json*
+*package-lock.json*
+*pnpm-lock.yaml*
+*postcss.config.js*
+*tailwind.config.js*
+*webpack.config.js*
+
+# Build / Dev artifacts
+*build*
+*admin-ui*
+*.map*
+
+# Git / CI
+*.git*
+*.gitignore*
+*.gitlab-ci.yml*
+
+# Config / tooling
+*.editorconfig*
+*phpcs.xml.dist*
+*gulpfile.js*
+
+# Docs / misc
+*CLAUDE.md*

@@ -1,0 +1,13 @@
+{
+	"name": "biliplugins/media-library-manager",
+	"type": "project",
+	"autoload": {
+		"psr-4": {
+			"BiliPlugins\\MediaLibraryManager\\": "src/"
+		}
+	},
+	"require": {
+		"woocommerce/action-scheduler": "^3.9",
+		"freemius/wordpress-sdk": "^2.13"
+	}
+}

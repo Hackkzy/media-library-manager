@@ -1,0 +1,37 @@
+{
+	"name": "media-library-manager",
+	"version": "1.0.0",
+	"author": "BiliPlugins",
+	"scripts": {
+		"build": "wp-scripts build && npm run copy:assets && npm run minify:assets",
+		"copy:assets": "copyfiles -u 1 \"build/**/*\" assets",
+		"minify:assets": "npx clean-css-cli -o assets/admin.css assets/admin.css && npx clean-css-cli -o assets/admin-rtl.css assets/admin-rtl.css",
+		"sync:assets": "npm run copy:assets && npm run minify:assets",
+		"format": "wp-scripts format",
+		"lint:css": "wp-scripts lint-style",
+		"lint:js": "wp-scripts lint-js",
+		"packages-update": "wp-scripts packages-update",
+		"plugin-zip": "cd .. && rm -f media-library-manager.zip && zip -r media-library-manager.zip media-library-manager -x@media-library-manager/.zipignore",
+		"deployer-zip": "zip -r plugin.zip * -x@.zipignore",
+		"start": "concurrently \"wp-scripts start\" \"chokidar 'build/**/*' -c 'npm run sync:assets'\""
+	},
+	"dependencies": {
+		"react-icons": "^5.4.0"
+	},
+	"devDependencies": {
+		"@wordpress/prettier-config": "^4.17.0",
+		"@wordpress/scripts": "^31.3.0",
+		"autoprefixer": "^10.4.24",
+		"chokidar-cli": "^3.0.0",
+		"clean-css-cli": "^5.6.3",
+		"concurrently": "^9.0.0",
+		"copyfiles": "^2.4.1",
+		"crypto-js": "^4.2.0",
+		"gulp": "^5.0.1",
+		"gulp-freemius-deploy": "^1.0.11",
+		"needle": "^3.5.0",
+		"postcss": "^8.5.6",
+		"tailwindcss": "^3.4.19"
+	},
+	"prettier": "@wordpress/prettier-config"
+}

@@ -1,0 +1,49 @@
+<?xml version="1.0"?>
+<ruleset name="Media Library Manager Coding Standards">
+	<description>Custom ruleset for Media Library Manager.</description>
+
+	<rule ref="WordPress">
+		<!-- File naming -->
+		<exclude name="WordPress.Files.FileName.NotHyphenatedLowercase"/>
+		<exclude name="WordPress.Files.FileName.InvalidClassFileName"/>
+		<!-- Comments -->
+		<exclude name="Squiz.Commenting.FileComment.WrongStyle"/>
+		<exclude name="Squiz.Commenting.FunctionComment.ParamCommentFullStop"/>
+		<exclude name="Squiz.Commenting.InlineComment.InvalidEndChar"/>
+		<!-- Naming conventions -->
+		<exclude name="WordPress.NamingConventions.ValidFunctionName.MethodNameInvalid"/>
+		<exclude name="WordPress.NamingConventions.ValidVariableName.VariableNotSnakeCase"/>
+		<exclude name="WordPress.NamingConventions.ValidVariableName.InterpolatedVariableNotSnakeCase"/>
+		<!-- Yoda conditions -->
+		<exclude name="WordPress.PHP.YodaConditions.NotYoda"/>
+		<!-- Unused parameters -->
+		<exclude name="Generic.CodeAnalysis.UnusedFunctionParameter"/>
+	</rule>
+
+	<rule ref="WordPress.WP.I18n">
+		<properties>
+			<property name="text_domain" type="array">
+				<element value="media-library-manager"/>
+			</property>
+		</properties>
+	</rule>
+
+
+	<!-- Specify which files to scan -->
+	<file>.</file>
+
+	<!-- Only scan PHP files -->
+	<arg name="extensions" value="php"/>
+
+	<!-- Optional: ignore vendor and node_modules folders -->
+	<exclude-pattern>*/vendor/*</exclude-pattern>
+	<exclude-pattern>*/node_modules/*</exclude-pattern>
+	<exclude-pattern>*/build/*</exclude-pattern>
+	<exclude-pattern>*/assets/*</exclude-pattern>
+
+	<!-- How to scan -->
+	<arg value="sp"/><!-- Show sniff and progress -->
+	<arg name="basepath" value="./"/><!-- Strip the file paths down to the relevant bit -->
+	<arg name="colors"/>
+	<arg name="parallel" value="8"/><!-- Enables parallel processing when available for faster results. -->
+</ruleset>

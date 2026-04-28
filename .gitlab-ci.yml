@@ -1,0 +1,64 @@
+stages:
+  - test
+  - deploy
+
+before_script:
+  - apt-get update -qy
+
+.phpcs_setup: &phpcs_setup
+  - apt-get install -y php php-xml
+  - php -r "copy('https://getcomposer.org/installer', 'composer-setup.php');"
+  - php composer-setup.php
+  - php -r "unlink('composer-setup.php');"
+  - mv composer.phar /usr/local/bin/composer
+  - composer global config allow-plugins.dealerdirect/phpcodesniffer-composer-installer true
+  - composer global require --dev wp-coding-standards/wpcs:"^3.0"
+  - composer global require --dev phpcompatibility/phpcompatibility-wp:"*"
+  - export PATH="$HOME/.composer/vendor/bin:$PATH"
+  - phpcs -i
+
+Coding Standard Check:
+  stage: test
+  script:
+    - *phpcs_setup
+    - phpcs -ps .
+
+PHP Compatibility Check:
+  stage: test
+  script:
+    - *phpcs_setup
+    - phpcs -p . --standard=PHPCompatibilityWP --runtime-set testVersion 7.4- --extensions=php
+
+freemius_deploy:
+  stage: deploy
+  before_script:
+      - apt-get update -qy
+      - apt-get install -y curl zip php php-xml
+      # Install Node via nvm
+      - curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.40.4/install.sh | bash
+      - \. "$HOME/.nvm/nvm.sh"
+      - nvm install 24
+      - node -v
+      # Install pnpm + configure global bin dir
+      - npm install -g pnpm
+      - export PNPM_HOME="$HOME/.local/share/pnpm"
+      - export PATH="$PNPM_HOME:$PATH"
+      - mkdir -p "$PNPM_HOME"
+      - pnpm config set global-bin-dir "$PNPM_HOME"
+      - pnpm -v
+      # Composer
+      - php -r "copy('https://getcomposer.org/installer', 'composer-setup.php');"
+      - php composer-setup.php
+      - php -r "unlink('composer-setup.php');"
+      - mv composer.phar /usr/local/bin/composer
+  script:
+    - pnpm add -g gulp-cli
+    - pnpm install
+    - composer install --no-dev
+    - pnpm run build
+    - pnpm run deployer-zip
+    - echo "{\"developer_id\":$FS_DEV_ID,\"plugin_id\":$FS_PLUGIN_ID,\"public_key\":\"$FS_DEV_PK\",\"secret_key\":\"$FS_DEV_SK\"}" > ./fs-config.json
+    - gulp freemius-deploy
+    - rm -f ./fs-config.json
+  only:
+    - tags

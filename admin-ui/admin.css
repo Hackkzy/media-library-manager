@@ -1,0 +1,72 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* Modal overlay (Tailwind `fixed` is disabled — it would break WP tables that use class `fixed`). */
+.blp-mlm-modal-layer {
+	position: fixed;
+	inset: 0;
+	z-index: 100000;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	padding: 1rem;
+	box-sizing: border-box;
+}
+
+/*
+ * Duplicates list: scoped to this admin screen, loaded after `wp-admin` so we win over plugin CSS.
+ * Do not alter WP_List_Table markup — only outer wrappers + column-file width (core omits it for .fixed).
+ */
+body.media_page_media-library-manager #wpbody-content .wrap .blp-mlm-tab-panel {
+	overflow: visible;
+	width: 100%;
+	max-width: 100%;
+	box-sizing: border-box;
+}
+
+body.media_page_media-library-manager #wpbody-content .wrap .blp-mlm-tab-content {
+	width: 100%;
+	max-width: 100%;
+	box-sizing: border-box;
+	/* Wide list tables: scroll horizontally here; vertical growth is never clipped */
+	overflow-x: auto;
+	overflow-y: visible;
+	-webkit-overflow-scrolling: touch;
+}
+
+body.media_page_media-library-manager .blp-mlm-list-form {
+	display: block;
+	width: 100%;
+	max-width: 100%;
+	margin: 0;
+	box-sizing: border-box;
+}
+
+body.media_page_media-library-manager .blp-mlm-tab-content .tablenav {
+	width: 100%;
+	max-width: 100%;
+	box-sizing: border-box;
+}
+
+body.media_page_media-library-manager .blp-mlm-tab-content .wp-list-table.widefat {
+	width: 100%;
+	box-sizing: border-box;
+}
+
+body.media_page_media-library-manager .blp-mlm-tab-content table.wp-list-table.fixed .column-file {
+	width: 58%;
+}
+
+@keyframes blp-mlm-spin {
+	from {
+		transform: rotate(0deg);
+	}
+	to {
+		transform: rotate(360deg);
+	}
+}
+
+.blp-mlm-reload-btn--rotating svg {
+	animation: blp-mlm-spin 0.6s ease-in-out;
+}

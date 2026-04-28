@@ -1,0 +1,6 @@
+/vendor/
+/node_modules/
+/build/
+node_modules
+*.map
+*DS_Store*
