@@ -3,7 +3,7 @@ Contributors: biliplugins
 Author URI: https://biliplugins.com/
 Tags: media, media library, duplicates, attachments, file management
 Requires at least: 6.1
-Tested up to: 6.9.4
+Tested up to: 6.9
 Stable tag: 1.0.0
 Requires PHP: 7.4
 License: GPLv2 or later

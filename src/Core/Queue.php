@@ -10,6 +10,13 @@ namespace BiliPlugins\MediaLibraryManager\Core;
 use ActionScheduler;
 
 /**
+ * Exit if accessed directly.
+ */
+if ( ! defined( 'ABSPATH' ) ) {
+	exit;
+}
+
+/**
  * Class for managing task queues using Action Scheduler.
  *
  * @since 1.0.0

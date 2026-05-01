@@ -397,8 +397,7 @@ class MediaDeduplicator {
 		$types_sql = implode( ',', array_fill( 0, count( $post_types ), '%s' ) );
 		$sql       = "SELECT ID FROM {$wpdb->posts} WHERE post_status = 'publish' AND post_type IN ({$types_sql}) AND (" . implode( ' OR ', $like_parts ) . ') ORDER BY post_date DESC LIMIT 100';
 
-		// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching, WordPress.DB.PreparedSQL.NotPrepared
-		$post_ids = $wpdb->get_col( $wpdb->prepare( $sql, ...$post_types ) );
+		$post_ids = $wpdb->get_col( $wpdb->prepare( $sql, ...$post_types ) ); // phpcs:ignore
 
 		if ( empty( $post_ids ) || ! is_array( $post_ids ) ) {
 			return array();
