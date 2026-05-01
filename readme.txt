@@ -13,16 +13,14 @@ A WordPress plugin to index, detect, and remove duplicate media files - with res
 
 == Description ==
 
-**Media Library Manager** gives you full control over your WordPress media library. It scans your uploaded files, identifies exact duplicates using SHA-256 file hashing, replaces all references to duplicate files with the canonical (kept) file, and moves duplicates to a plugin-managed trash. Everything runs in the background via Action Scheduler, so large libraries are handled without timeouts.
+**Media Library Manager** helps you organize your WordPress media library. It scans uploaded files and identifies exact duplicates using SHA-256 file hashing. All indexing runs in the background via Action Scheduler, so large libraries are handled without timeouts.
 
 **Key features:**
 
 * **Index your media library** — hashes every attachment (SHA-256) for fast, accurate duplicate detection.
 * **Detect duplicates** — groups files by hash and shows all duplicate sets in a paginated admin list.
-* **Remove duplicates** — replaces every post content reference (image IDs, URLs, all size variants) from post content and featured image with the canonical file, then moves duplicates to plugin trash.
-* **Restore-aware trash** — restoring a trashed attachment automatically reverts post content and featured images back to that attachment, without losing any edits made after deduplication.
-* **Permanent deletion** — empty the trash to permanently delete files and their WordPress records via background jobs.
-* **Background processing** — all indexing, deduplication, and deletion runs via Action Scheduler; no page-timeout risk on large sites.
+* **Background processing** — indexing runs via Action Scheduler; no page-timeout risk on large sites.
+* **Free + Pro workflow** — in free, you can review duplicate groups and manually trash attachments via row actions; bulk remove and empty trash are available in Pro.
 
 == Installation ==
 
@@ -30,25 +28,21 @@ A WordPress plugin to index, detect, and remove duplicate media files - with res
 2. Activate the plugin through the **Plugins** screen in WordPress.
 3. Navigate to **Media → Media Library Manager** in the WordPress admin.
 4. Click **Index Media** to hash your existing attachments.
-5. Once indexing is complete, click **Remove Duplicates** to begin deduplication.
+5. Review indexed results in the Media Library Manager page and identify duplicate groups.
 
 == Frequently Asked Questions ==
 
-= Will removing duplicates break my posts or pages? =
+= Can I remove duplicates in the free version? =
 
-No. Before any file is trashed, the plugin replaces every reference to the duplicate attachment — post content image IDs, image URLs (all registered sizes), and featured image (`_thumbnail_id`) — with the equivalent reference to the canonical (kept) file. Your posts and pages will continue to display images correctly.
+Yes, but manually. In the free version, you can trash individual attachments using row actions. Bulk duplicate removal is available in the Pro version.
 
-= Can I undo a deduplication? =
+= Is empty trash available in the free version? =
 
-Yes. Trashed attachments can be restored from the Trash view under Media Library Manager. Restoring an attachment automatically reverts **only post content and featured images** back to that attachment, without affecting any other edits made to those posts after deduplication ran.
+No. Empty trash is available in the Pro version.
 
 = Is it safe to use on a live site? =
 
-It is recommended to take a full backup before running bulk deduplication on a production site, as with any operation that modifies post content in bulk. The plugin is designed to be safe and reversible (via restore), but a backup is always a good practice.
-
-= What happens when I empty the trash? =
-
-All trashed attachments are queued for permanent deletion via background jobs. Then files are removed from the server and their WordPress records are deleted. This action cannot be undone, so make sure you have reviewed the trash before emptying it.
+It is recommended to take a full backup before performing any bulk media changes on a production site. A backup is always a good practice.
 
 = Does indexing affect site performance? =
 
@@ -59,5 +53,5 @@ Indexing runs in the background via Action Scheduler and does not run on page lo
 = 1.0.0 =
 
 - File indexing
-- File deduplication
-- File restoration
+- Duplicate identification
+- Initial free release

@@ -102,17 +102,11 @@ class DuplicateMediaTable extends \WP_List_Table {
 	public function get_columns() {
 
 		$table_columns = array(
-			'cb'          => '<input type="checkbox" />',
 			'file'        => esc_html__( 'File', 'media-library-manager' ),
 			'author'      => esc_html__( 'Author', 'media-library-manager' ),
 			'uploaded_to' => esc_html__( 'Uploaded to', 'media-library-manager' ),
 			'date'        => esc_html__( 'Date', 'media-library-manager' ),
 		);
-
-		// if ( ! $this->is_trash_view() ) {
-		// 	// Remove checkbox column in trash view.
-		// 	unset( $table_columns['cb'] );
-		// }
 
 		return $table_columns;
 	}
@@ -189,25 +183,6 @@ class DuplicateMediaTable extends \WP_List_Table {
 	}
 
 	/**
-	 * Get bulk actions.
-	 *
-	 * @return array Bulk actions.
-	 * @since 1.0.0
-	 */
-	public function get_bulk_actions() {
-		if ( ! $this->is_trash_view() ) {
-			return array(
-				'trash' => esc_html__( 'Trash', 'media-library-manager' ),
-			);
-		}
-
-		return array(
-			'restore' => esc_html__( 'Restore', 'media-library-manager' ),
-			'delete'  => esc_html__( 'Delete Permanently', 'media-library-manager' ),
-		);
-	}
-
-	/**
 	 * Process bulk actions.
 	 *
 	 * @return void
@@ -229,7 +204,6 @@ class DuplicateMediaTable extends \WP_List_Table {
 		}
 
 		if ( 'single_restore' === $action ) {
-
 			// Verify nonce.
 			if ( ! isset( $_REQUEST['_wpnonce'] ) || ! wp_verify_nonce( sanitize_text_field( wp_unslash( $_REQUEST['_wpnonce'] ) ), 'blp_mlm_restore_single' ) ) {
 				return;
@@ -239,37 +213,6 @@ class DuplicateMediaTable extends \WP_List_Table {
 			$id = isset( $_REQUEST['blp_mlm_restore_id'] ) ? absint( $_REQUEST['blp_mlm_restore_id'] ) : 0;
 			MediaDeduplicator::restore_attachment( $id );
 			return;
-
-		}
-
-		if ( ! in_array( $action, array( 'delete', 'trash', 'restore' ), true ) ) {
-			return;
-		}
-
-		// Verify nonce.
-		if ( ! isset( $_REQUEST['_wpnonce'] ) || ! wp_verify_nonce( sanitize_text_field( wp_unslash( $_REQUEST['_wpnonce'] ) ), 'bulk-blp_mlm_duplicate_medias' ) ) {
-			return;
-		}
-
-		// Get IDs.
-		$ids = isset( $_REQUEST['blp_mlm_duplicate_media'] ) ? array_map( 'absint', (array) $_REQUEST['blp_mlm_duplicate_media'] ) : array();
-
-		if ( empty( $ids ) ) {
-			return;
-		}
-
-		switch ( $action ) {
-			case 'delete':
-				MediaDeduplicator::bulk_delete( $ids );
-				break;
-			case 'trash':
-				MediaDeduplicator::bulk_trash( $ids );
-				break;
-			case 'restore':
-				MediaDeduplicator::bulk_restore( $ids );
-				break;
-			default:
-				break;
 		}
 	}
 
@@ -416,16 +359,6 @@ class DuplicateMediaTable extends \WP_List_Table {
 	 */
 	public function column_date( $item ) {
 		return esc_html( get_the_date( '', $item->ID ) );
-	}
-
-	/**
-	 * Render checkbox column.
-	 *
-	 * @param object $item Item.
-	 * @return string
-	 */
-	public function column_cb( $item ) {
-		return sprintf( '<input type="checkbox" name="blp_mlm_duplicate_media[]" value="%d" />', $item->ID );
 	}
 
 	/**

@@ -17,11 +17,7 @@ namespace BiliPlugins\MediaLibraryManager;
 use BiliPlugins\MediaLibraryManager\Admin\Pages\MediaLibraryManagerPage;
 use BiliPlugins\MediaLibraryManager\Admin\AdminHooks;
 use BiliPlugins\MediaLibraryManager\Rest\V1\IndexingController;
-use BiliPlugins\MediaLibraryManager\Rest\V1\DuplicatesController;
-use BiliPlugins\MediaLibraryManager\Rest\V1\TrashController;
 use BiliPlugins\MediaLibraryManager\Scheduler\IndexMediaJob;
-use BiliPlugins\MediaLibraryManager\Scheduler\RemoveDuplicatesJob;
-use BiliPlugins\MediaLibraryManager\Scheduler\DeleteTrashedMediaJob;
 use BiliPlugins\MediaLibraryManager\Core\Installer;
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -142,8 +138,6 @@ final class MediaLibraryManager {
 	 */
 	public function plugin_loader(): void {
 		new IndexingController();
-		new DuplicatesController();
-		new TrashController();
 
 		if ( is_admin() ) {
 			new MediaLibraryManagerPage();
@@ -158,8 +152,6 @@ final class MediaLibraryManager {
 	 */
 	public function register_scheduled_jobs() {
 		IndexMediaJob::register();
-		RemoveDuplicatesJob::register();
-		DeleteTrashedMediaJob::register();
 	}
 
 	/**

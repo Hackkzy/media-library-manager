@@ -70,6 +70,22 @@ class MediaDeduplicator {
 		if ( self::is_trashed( $attachment_id ) ) {
 			return true;
 		}
+
+		$auto_resolved_canonical = false;
+
+		// For single-item trash from UI, resolve canonical duplicate and update references first.
+		if ( $canonical_id <= 0 ) {
+			$data_provider           = new MediaDataProvider();
+			$canonical_id            = (int) $data_provider->get_original_attachment_id( $attachment_id );
+			$auto_resolved_canonical = true;
+		}
+
+		if ( $auto_resolved_canonical && $canonical_id > 0 && $canonical_id !== $attachment_id ) {
+			$content_post_ids   = self::replace_media_in_post_content( $canonical_id, array( $attachment_id ) );
+			$thumbnail_post_ids = self::replace_post_media_in_meta( $attachment_id, $canonical_id );
+			$affected_post_ids  = array_values( array_unique( array_merge( $affected_post_ids, $content_post_ids, $thumbnail_post_ids ) ) );
+		}
+
 		$payload = array(
 			'trashed_at'        => time(),
 			'trashed_by'        => get_current_user_id(),

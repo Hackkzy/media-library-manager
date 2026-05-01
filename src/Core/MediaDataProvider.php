@@ -313,4 +313,49 @@ class MediaDataProvider {
 		// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching, WordPress.DB.PreparedSQL.NotPrepared -- Complex query with subquery, no user input, properly prepared.
 		return (int) $wpdb->get_var( $sql );
 	}
+
+	/**
+	 * Get the original non-trashed duplicate attachment ID for a given attachment.
+	 *
+	 * @param int $attachment_id Attachment ID used to locate the hash group.
+	 * @return int|false Lowest matching attachment ID, or false when not found/invalid/no hash.
+	 */
+	public function get_original_attachment_id( int $attachment_id ): ?int {
+		global $wpdb;
+
+		if ( empty( $attachment_id ) ) {
+			return false;
+		}
+
+		$sql = $wpdb->prepare(
+			"SELECT p.ID
+			FROM {$wpdb->posts} p
+			INNER JOIN {$wpdb->postmeta} pm
+				ON p.ID = pm.post_id AND pm.meta_key = %s
+			LEFT JOIN {$wpdb->postmeta} pm_trash
+				ON p.ID = pm_trash.post_id AND pm_trash.meta_key = %s
+			WHERE pm.meta_value = (
+				SELECT pm_src.meta_value
+				FROM {$wpdb->postmeta} pm_src
+				WHERE pm_src.post_id = %d AND pm_src.meta_key = %s
+				LIMIT 1
+			)
+			AND p.ID <> %d
+			AND p.post_type = 'attachment'
+			AND p.post_status = 'inherit'
+			AND pm_trash.meta_id IS NULL
+			ORDER BY p.ID ASC
+			LIMIT 1",
+			self::META_KEY_HASH,
+			self::META_KEY_TRASH,
+			$attachment_id,
+			self::META_KEY_HASH,
+			$attachment_id
+		);
+
+		// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching, WordPress.DB.PreparedSQL.NotPrepared -- Query is prepared; no user input.
+		$original_id = $wpdb->get_var( $sql );
+
+		return $original_id ? (int) $original_id : null;
+	}
 }
