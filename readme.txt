@@ -54,10 +54,11 @@ This approach ensures you stay in full control while safely cleaning up your med
 
 == Screenshots ==
 1. Scan Media
+2. Scan in processes
 2. Scan Completed
 3. Duplicates List
 4. Rmove Duplicate Media to Trash
-5. Restore Media from Trash
+5. Restore or permanently delete Media from Trash
 
 == Frequently Asked Questions ==
 
