@@ -33,7 +33,7 @@ const Modal = ({ setProUpgradeOpen, upgradeDescription }) => {
 					id="blp-mlm-pro-upgrade-title"
 					className="text-lg font-semibold text-slate-900"
 				>
-					{__('Upgrade to Pro', 'media-library-manager')}
+					{__('Pro Feature', 'media-library-manager')}
 				</h2>
 				<p
 					id="blp-mlm-pro-upgrade-desc"
@@ -55,7 +55,7 @@ const Modal = ({ setProUpgradeOpen, upgradeDescription }) => {
 						className="inline-flex items-center justify-center cursor-pointer rounded-lg border border-wp-blue bg-white px-4 py-2 text-sm font-medium text-wp-blue transition-colors hover:bg-wp-blue/10 hover:text-wp-blue-hover focus:outline-none focus:ring-2 focus:ring-wp-blue focus:ring-offset-2"
 						onClick={() => setProUpgradeOpen(false)}
 					>
-						{__('Cancel', 'media-library-manager')}
+						{__('Continue Manually', 'media-library-manager')}
 					</button>
 				</div>
 			</div>

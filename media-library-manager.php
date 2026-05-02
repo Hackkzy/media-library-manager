@@ -5,8 +5,9 @@
  * Version:           1.0.0
  * Requires at least: 6.1
  * Requires PHP:      7.4
- * Author:            BiliPlugins
+ * Author:            Bili Plugins
  * Author URI:        https://biliplugins.com/
+ * Plugin URI:        https://www.medialibrarymanager.com/
  * Text Domain:       media-library-manager
  *
  * @package Media_Library_Manager
