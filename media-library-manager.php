@@ -9,6 +9,8 @@
  * Author URI:        https://biliplugins.com/
  * Plugin URI:        https://www.medialibrarymanager.com/
  * Text Domain:       media-library-manager
+ * License:           GPL-2.0-or-later
+ * License URI:       https://www.gnu.org/licenses/gpl-2.0.html
  *
  * @package Media_Library_Manager
  */

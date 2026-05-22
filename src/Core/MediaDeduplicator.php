@@ -7,6 +7,8 @@
 
 namespace BiliPlugins\MediaLibraryManager\Core;
 
+use BiliPlugins\MediaLibraryManager\Compatibility\Woo;
+
 /**
  * Exit if accessed directly.
  */
@@ -131,8 +133,9 @@ class MediaDeduplicator {
 	 * @param int  $attachment_id Trashed attachment whose replacement caused the change.
 	 * @param bool $content       Whether post_content was changed.
 	 * @param bool $thumbnail     Whether _thumbnail_id was changed.
+	 * @param bool $gallery       Whether WooCommerce product gallery meta was changed.
 	 */
-	private static function record_post_backup( int $post_id, int $attachment_id, bool $content, bool $thumbnail ): void {
+	private static function record_post_backup( int $post_id, int $attachment_id, bool $content, bool $thumbnail, bool $gallery = false ): void {
 		$existing = get_post_meta( $post_id, self::CONTENT_BACKUP_META_KEY, true );
 		if ( ! is_array( $existing ) ) {
 			$existing = array();
@@ -143,6 +146,7 @@ class MediaDeduplicator {
 		$existing[ $attachment_id ] = array(
 			'content'   => $content,
 			'thumbnail' => $thumbnail,
+			'gallery'   => $gallery,
 		);
 		update_post_meta( $post_id, self::CONTENT_BACKUP_META_KEY, $existing );
 	}
@@ -397,8 +401,7 @@ class MediaDeduplicator {
 		$types_sql = implode( ',', array_fill( 0, count( $post_types ), '%s' ) );
 		$sql       = "SELECT ID FROM {$wpdb->posts} WHERE post_status = 'publish' AND post_type IN ({$types_sql}) AND (" . implode( ' OR ', $like_parts ) . ') ORDER BY post_date DESC LIMIT 100';
 
-		// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching, WordPress.DB.PreparedSQL.NotPrepared
-		$post_ids = $wpdb->get_col( $wpdb->prepare( $sql, ...$post_types ) );
+		$post_ids = $wpdb->get_col( $wpdb->prepare( $sql, ...$post_types ) ); // phpcs:ignore
 
 		if ( empty( $post_ids ) || ! is_array( $post_ids ) ) {
 			return array();
@@ -549,6 +552,11 @@ class MediaDeduplicator {
 		}
 		$where_parts[] = $wpdb->prepare( 'meta_value LIKE %s', '%' . $wpdb->esc_like( 'wp-image-' . $from_id ) . '%' );
 		$where_parts[] = $wpdb->prepare( 'meta_value LIKE %s', '%' . $wpdb->esc_like( 'attachment_' . $from_id ) . '%' );
+		$where_parts[] = $wpdb->prepare(
+			'meta_key = %s AND meta_value LIKE %s',
+			Woo::PRODUCT_IMAGE_GALLERY_META_KEY,
+			'%' . $wpdb->esc_like( (string) $from_id ) . '%'
+		);
 
 		$limit = (int) self::META_REPLACE_ROW_LIMIT;
 		$sql   = "SELECT meta_id, meta_key, post_id, meta_value FROM {$wpdb->postmeta} WHERE (" . implode( ' OR ', $where_parts ) . ") ORDER BY meta_id DESC LIMIT {$limit}";
@@ -583,6 +591,16 @@ class MediaDeduplicator {
 				}
 				continue;
 			}
+
+			if ( Woo::is_product_gallery_meta_key( $meta->meta_key ) ) {
+				$new = Woo::replace_product_gallery_reference( $raw, $from_id, $to_id );
+				if ( $new !== $raw ) {
+					self::record_post_backup( (int) $meta->post_id, $from_id, false, false, true );
+					update_post_meta( $meta->post_id, $meta->meta_key, $new );
+				}
+				continue;
+			}
+
 			$new = self::replace_attachment_variant_urls_in_string( $raw, $from_id, $to_id );
 			if ( $new !== $raw ) {
 				update_post_meta( $meta->post_id, $meta->meta_key, $new );
@@ -711,6 +729,16 @@ class MediaDeduplicator {
 				$current_thumb = (int) get_post_meta( $post_id, '_thumbnail_id', true );
 				if ( $current_thumb === $canonical_id ) {
 					update_post_meta( $post_id, '_thumbnail_id', $attachment_id );
+				}
+			}
+
+			if ( ! empty( $entry['gallery'] ) ) {
+				$current_gallery = get_post_meta( $post_id, Woo::PRODUCT_IMAGE_GALLERY_META_KEY, true );
+				if ( is_string( $current_gallery ) && '' !== $current_gallery ) {
+					$updated_gallery = Woo::restore_product_gallery_reference( $current_gallery, $canonical_id, $attachment_id );
+					if ( $updated_gallery !== $current_gallery ) {
+						update_post_meta( $post_id, Woo::PRODUCT_IMAGE_GALLERY_META_KEY, $updated_gallery );
+					}
 				}
 			}
 
