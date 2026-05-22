@@ -127,7 +127,7 @@ class IndexMediaJob {
 	private static function queue_media( $media_ids, $priority = 25 ) {
 
 		if ( empty( $media_ids ) ) {
-			return;
+			return false;
 		}
 
 		$queue     = self::$idex_queue;

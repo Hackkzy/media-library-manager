@@ -22,7 +22,7 @@ const EmptyTrashControl = () => {
 				<Modal
 					setProUpgradeOpen={setProUpgradeOpen}
 					upgradeDescription={__(
-						'Empty trash is available in the Pro version of Media Library Manager. Upgrade to unlock this feature and more.',
+						'Empty Trash is available in Pro. No worries - you can still remove duplicates from the trash individually in the free version. Upgrade anytime to clean everything in one go.',
 						'media-library-manager'
 					)}
 				/>

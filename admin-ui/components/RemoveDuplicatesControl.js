@@ -24,7 +24,7 @@ const RemoveDuplicatesControl = () => {
 				<Modal
 					setProUpgradeOpen={setProUpgradeOpen}
 					upgradeDescription={__(
-						'Duplicate removal is available in the Pro version of Media Library Manager. Upgrade to unlock this feature and more.',
+						'Bulk duplicate removal is available in Pro. No worries - you can still remove duplicates individually in the free version. Upgrade anytime to clean everything in one go.',
 						'media-library-manager'
 					)}
 				/>
